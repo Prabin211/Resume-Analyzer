@@ -51,3 +51,8 @@ class UploadResumeView(APIView):
             })
 
         return Response(serializer.errors)
+
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Resume Analyzer API is running 🚀")
