@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Analyzer</title>
+</head>
+<body>
+
+    <h2>Upload Resume</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <input type="file" name="file" required><br><br>
+
+        <textarea name="job_description" placeholder="Enter job description" rows="5" cols="50"></textarea><br><br>
+
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if result %}
+        <h3>Results:</h3>
+        <p><strong>Skills:</strong> {{ result.skills }}</p>
+        <p><strong>Score:</strong> {{ result.score }}</p>
+        <p><strong>Match %:</strong> {{ result.match_percentage }}</p>
+        <p><strong>Missing Skills:</strong> {{ result.missing_skills }}</p>
+    {% endif %}
+
+</body>
+</html>

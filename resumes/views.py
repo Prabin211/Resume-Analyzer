@@ -7,10 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 
+from django.shortcuts import render
 from .models import Resume
 from .serializers import ResumeSerializer
 
 
+# ---------------- API VIEW ---------------- #
 class UploadResumeView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -34,7 +36,7 @@ class UploadResumeView(APIView):
             # ATS Score
             score, missing = calculate_ats_score(skills)
 
-            #Job Description
+            # Job Description
             job_desc = request.data.get("job_description", "")
 
             similarity = None
@@ -52,7 +54,37 @@ class UploadResumeView(APIView):
 
         return Response(serializer.errors)
 
-from django.http import HttpResponse
 
+# ---------------- UI VIEW ---------------- #
 def home(request):
-    return HttpResponse("Resume Analyzer API is running 🚀")
+    if request.method == "POST":
+        file = request.FILES.get('file')
+        job_desc = request.POST.get('job_description', '')
+
+        if file:
+            resume = Resume.objects.create(file=file)
+
+            # Extract text
+            text = extract_text_from_pdf(resume.file.path)
+
+            # Extract skills
+            skills = extract_skills(text)
+
+            # ATS score
+            score, missing = calculate_ats_score(skills)
+
+            # Job matching
+            similarity = None
+            if job_desc:
+                similarity = calculate_similarity(text, job_desc)
+
+            result = {
+                "skills": skills,
+                "score": score,
+                "missing_skills": missing,
+                "match_percentage": similarity
+            }
+
+            return render(request, 'index.html', {"result": result})
+
+    return render(request, 'index.html')

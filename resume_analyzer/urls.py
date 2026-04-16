@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
+from resumes.views import home
 
 from django.conf import settings
 from django.conf.urls.static import static
-from resumes.views import home
+
 urlpatterns = [
-    path('', home),
+    path('', home),  # UI homepage
     path('admin/', admin.site.urls),
     path('api/', include('resumes.urls')),
 ]
-
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
