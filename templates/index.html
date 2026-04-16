@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Resume Analyzer</title>
+    <title>AI Resume Analyzer</title>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,11 +17,11 @@
         .container {
             width: 60%;
             margin: 50px auto;
-            background: #ffffff10;
-            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0px 8px 30px rgba(0,0,0,0.3);
+            box-shadow: 0px 8px 30px rgba(0,0,0,0.4);
         }
 
         h2 {
@@ -30,26 +30,32 @@
 
         input, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 10px;
             border-radius: 8px;
             border: none;
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
         }
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-top: 20px;
-            background: #00c6ff;
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
+            transition: 0.3s;
         }
 
         button:hover {
-            background: #0072ff;
+            transform: scale(1.03);
         }
 
         .tag {
@@ -86,8 +92,8 @@
         }
 
         .rocket {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: orange;
             border-radius: 50%;
             position: absolute;
@@ -137,7 +143,7 @@
             <span class="tag missing">{{ skill }}</span>
         {% endfor %}
 
-        <h3>Scores</h3>
+        <h3>Performance</h3>
         <canvas id="scoreChart"></canvas>
 
     </div>
@@ -152,19 +158,47 @@
                 datasets: [{
                     label: 'Performance',
                     data: [{{ result.score|default:0 }}, {{ result.match_percentage|default:0 }}],
+                    backgroundColor: ['#00c6ff', '#ff9800']
                 }]
             },
             options: {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Resume Analysis',
+                        color: 'white'
+                    }
+                },
                 scales: {
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: '#ffffff30'
+                        }
+                    },
                     y: {
                         beginAtZero: true,
-                        max: 100
+                        max: 100,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: '#ffffff30'
+                        }
                     }
                 }
             }
         });
     </script>
     {% endif %}
+
 </div>
 
 <script>
