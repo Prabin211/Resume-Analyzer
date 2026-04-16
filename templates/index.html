@@ -26,6 +26,7 @@
 
         h2 {
             text-align: center;
+            font-size: 28px;
         }
 
         input, textarea {
@@ -75,44 +76,26 @@
             margin-top: 30px;
         }
 
-        /* 🚀 Loader */
-        .loader {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
+        /* 🤖 Robot icon animation */
+        .robot {
+            display: inline-block;
+            animation: float 2s ease-in-out infinite;
         }
 
-        .moon {
-            width: 60px;
-            height: 60px;
-            background: #ccc;
-            border-radius: 50%;
-            margin: auto;
-            position: relative;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
         }
 
-        .rocket {
-            width: 18px;
-            height: 18px;
-            background: orange;
-            border-radius: 50%;
-            position: absolute;
-            animation: orbit 2s linear infinite;
-        }
-
-        @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(40px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
-        }
     </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h2>🚀 AI Resume Analyzer</h2>
+    <h2>🤖 AI Resume Analyzer</h2>
 
-    <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <input type="file" name="file" required>
@@ -121,14 +104,6 @@
 
         <button type="submit">Analyze Resume</button>
     </form>
-
-    <!-- 🚀 Loader -->
-    <div class="loader" id="loader">
-        <p>Analyzing your resume...</p>
-        <div class="moon">
-            <div class="rocket"></div>
-        </div>
-    </div>
 
     {% if result %}
     <div class="result">
@@ -200,12 +175,6 @@
     {% endif %}
 
 </div>
-
-<script>
-function showLoader() {
-    document.getElementById("loader").style.display = "block";
-}
-</script>
 
 </body>
 </html>
