@@ -2,26 +2,30 @@
 <html>
 <head>
     <title>Resume Analyzer</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fa;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             margin: 0;
-            padding: 0;
+            color: white;
         }
 
         .container {
-            width: 50%;
+            width: 60%;
             margin: 50px auto;
-            background: white;
+            background: #ffffff10;
+            backdrop-filter: blur(10px);
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0px 8px 30px rgba(0,0,0,0.3);
         }
 
         h2 {
             text-align: center;
-            color: #333;
         }
 
         input, textarea {
@@ -29,14 +33,14 @@
             padding: 10px;
             margin-top: 10px;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: none;
         }
 
         button {
             width: 100%;
             padding: 12px;
             margin-top: 20px;
-            background: #4CAF50;
+            background: #00c6ff;
             color: white;
             border: none;
             border-radius: 8px;
@@ -45,75 +49,129 @@
         }
 
         button:hover {
-            background: #45a049;
-        }
-
-        .result {
-            margin-top: 30px;
-            padding: 15px;
-            background: #f1f1f1;
-            border-radius: 10px;
+            background: #0072ff;
         }
 
         .tag {
             display: inline-block;
-            background: #2196F3;
-            color: white;
-            padding: 5px 10px;
+            background: #00c6ff;
+            padding: 6px 12px;
             margin: 5px;
             border-radius: 20px;
             font-size: 12px;
         }
 
-        .score {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
+        .missing {
+            background: red;
         }
 
-        .missing {
-            color: red;
+        .result {
+            margin-top: 30px;
+        }
+
+        /* 🚀 Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .moon {
+            width: 60px;
+            height: 60px;
+            background: #ccc;
+            border-radius: 50%;
+            margin: auto;
+            position: relative;
+        }
+
+        .rocket {
+            width: 20px;
+            height: 20px;
+            background: orange;
+            border-radius: 50%;
+            position: absolute;
+            animation: orbit 2s linear infinite;
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>🚀 Resume Analyzer</h2>
+    <h2>🚀 AI Resume Analyzer</h2>
 
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
         {% csrf_token %}
-        
-        <label>Upload Resume:</label>
+
         <input type="file" name="file" required>
 
-        <label>Job Description:</label>
-        <textarea name="job_description" rows="5" placeholder="Paste job description..."></textarea>
+        <textarea name="job_description" placeholder="Paste job description..."></textarea>
 
         <button type="submit">Analyze Resume</button>
     </form>
 
+    <!-- 🚀 Loader -->
+    <div class="loader" id="loader">
+        <p>Analyzing your resume...</p>
+        <div class="moon">
+            <div class="rocket"></div>
+        </div>
+    </div>
+
     {% if result %}
     <div class="result">
-        <h3>Results</h3>
 
-        <p><strong>Skills:</strong></p>
+        <h3>Skills</h3>
         {% for skill in result.skills %}
             <span class="tag">{{ skill }}</span>
         {% endfor %}
 
-        <p class="score">ATS Score: {{ result.score }}%</p>
-
-        <p class="score">Match Percentage: {{ result.match_percentage }}%</p>
-
-        <p><strong class="missing">Missing Skills:</strong></p>
+        <h3>Missing Skills</h3>
         {% for skill in result.missing_skills %}
-            <span class="tag" style="background:red;">{{ skill }}</span>
+            <span class="tag missing">{{ skill }}</span>
         {% endfor %}
-    </div>
-    {% endif %}
 
+        <h3>Scores</h3>
+        <canvas id="scoreChart"></canvas>
+
+    </div>
+
+    <script>
+        const ctx = document.getElementById('scoreChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['ATS Score', 'Match %'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [{{ result.score|default:0 }}, {{ result.match_percentage|default:0 }}],
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
 </div>
+
+<script>
+function showLoader() {
+    document.getElementById("loader").style.display = "block";
+}
+</script>
 
 </body>
 </html>
