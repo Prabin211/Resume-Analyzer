@@ -2,28 +2,118 @@
 <html>
 <head>
     <title>Resume Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #2196F3;
+            color: white;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .missing {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 
-    <h2>Upload Resume</h2>
+<div class="container">
+    <h2>🚀 Resume Analyzer</h2>
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <input type="file" name="file" required><br><br>
+        <label>Upload Resume:</label>
+        <input type="file" name="file" required>
 
-        <textarea name="job_description" placeholder="Enter job description" rows="5" cols="50"></textarea><br><br>
+        <label>Job Description:</label>
+        <textarea name="job_description" rows="5" placeholder="Paste job description..."></textarea>
 
-        <button type="submit">Analyze</button>
+        <button type="submit">Analyze Resume</button>
     </form>
 
     {% if result %}
-        <h3>Results:</h3>
-        <p><strong>Skills:</strong> {{ result.skills }}</p>
-        <p><strong>Score:</strong> {{ result.score }}</p>
-        <p><strong>Match %:</strong> {{ result.match_percentage }}</p>
-        <p><strong>Missing Skills:</strong> {{ result.missing_skills }}</p>
+    <div class="result">
+        <h3>Results</h3>
+
+        <p><strong>Skills:</strong></p>
+        {% for skill in result.skills %}
+            <span class="tag">{{ skill }}</span>
+        {% endfor %}
+
+        <p class="score">ATS Score: {{ result.score }}%</p>
+
+        <p class="score">Match Percentage: {{ result.match_percentage }}%</p>
+
+        <p><strong class="missing">Missing Skills:</strong></p>
+        {% for skill in result.missing_skills %}
+            <span class="tag" style="background:red;">{{ skill }}</span>
+        {% endfor %}
+    </div>
     {% endif %}
+
+</div>
 
 </body>
 </html>
